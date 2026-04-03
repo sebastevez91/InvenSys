@@ -1,7 +1,8 @@
 const sql = require('mssql/msnodesqlv8');
 
+// Configuración de la conexión a SQL Server usando ODBC Driver 18 para Windows Authentication
 const dbConfig = {
-  connectionString: `Driver={ODBC Driver 17 for SQL Server};Server=(localdb)\\MSSQLLocalDB;Database=${process.env.DB_NAME};Trusted_Connection=yes;`,
+  connectionString: process.env.DB_CONNECTION_STRING,
   driver: 'msnodesqlv8',
   pool: {
     max: 10,

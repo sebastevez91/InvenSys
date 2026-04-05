@@ -5,6 +5,7 @@ const categoriasRoutes = require('./categorias.routes');
 const stockRoutes      = require('./stock.routes');
 const proveedoresRoutes = require('./proveedores.routes');
 const comprasRoutes = require('./compras.routes');
+const ventasRoutes = require('./ventas.routes');
 
 const router = Router();
 
@@ -14,8 +15,6 @@ router.use('/categorias', categoriasRoutes);
 router.use('/stock', stockRoutes);
 router.use('/proveedores', proveedoresRoutes);
 router.use('/compras', comprasRoutes);
-
-// Aquí irán las demás rutas a medida que avances:
-// router.use('/ventas',      ventasRoutes);
+router.use('/ventas', ventasRoutes);
 
 module.exports = router;

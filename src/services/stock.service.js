@@ -27,7 +27,7 @@ const registrarMovimiento = async ({ id_producto, id_almacen, tipo, cantidad, id
         AND id_almacen = @id_almacen`
       );
 
-      console.log('STOCK RESULT:', JSON.stringify(stockActual.recordset));
+      //console.log('STOCK RESULT:', JSON.stringify(stockActual.recordset));
 
     // Uso .recordset, que traé un array de objetos
     if(stockActual.recordset.length === 0){
@@ -49,7 +49,7 @@ const registrarMovimiento = async ({ id_producto, id_almacen, tipo, cantidad, id
       throw { status: 400, message: `Stock insuficiente. Stock actual: ${cantidadAnterior}`};
     }
 
-    console.log('DEBUG:', { id_producto, id_almacen, tipo, cantidad, cantidadAnterior, cantidadNueva });
+    //console.log('DEBUG:', { id_producto, id_almacen, tipo, cantidad, cantidadAnterior, cantidadNueva });
 
     // Si llegamos hasta acá, es porque el stock nuevo es válido. Entonces actualizamos el stock y registramos el movimiento en el historial.
     const requestUpdate = new sql.Request(transaction);

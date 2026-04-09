@@ -2,13 +2,14 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Pages (las vamos a crear después)
-import Login from './pages/Login';
+
 import Dashboard from './pages/Dashboard';
-import Productos from './pages/Productos';
-import Categorias from './pages/Categorias';
+import Productos from './pages/Productos/Productos';
+import Categorias from './pages/Categorias/Categorias';
 import Proveedores from './pages/Proveedores';
 import Compras from './pages/Compras';
 import Ventas from './pages/Ventas';
+import Login from './pages/Login/Login';
 
 // Ruta protegida: redirige al login si no hay sesión
 const PrivateRoute = ({ children }) => {

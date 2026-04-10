@@ -7,8 +7,8 @@ import Dashboard from './pages/Dashboard';
 import Productos from './pages/Productos/Productos';
 import Categorias from './pages/Categorias/Categorias';
 import Proveedores from './pages/Proveedores/Proveedores';
-import Compras from './pages/Compras';
-import Ventas from './pages/Ventas';
+import Compras from './pages/Compras/Compras';
+import Ventas from './pages/Ventas/Ventas';
 import Login from './pages/Login/Login';
 
 // Ruta protegida: redirige al login si no hay sesión

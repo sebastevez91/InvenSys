@@ -5,7 +5,7 @@
     margin-bottom: 20px;
 }
 
-h1 {
+.titulo {
     font-size: 24px;
     font-weight: bold;
     color: #1a1a2e;
@@ -29,7 +29,7 @@ h1 {
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-table {
+.table {
     width: 100%;
     border-collapse: collapse;
 }
@@ -38,7 +38,7 @@ table {
     background-color: #f8f9fa;
 }
 
-th {
+.th {
     padding: 14px 16px;
     text-align: left;
     font-size: 13px;
@@ -47,11 +47,11 @@ th {
     border-bottom: 1px solid #eee;  
 }
 
-tr{
+.tr{
     border-bottom: 1px solid #f0f0f0;
 }
 
-td {
+.td {
     padding: 12px 16px;
     font-size: 14px;
     color: #333;
@@ -122,7 +122,7 @@ td {
     margin-bottom: 14px;
 }
 
-label {
+.label {
     display: block;
     margin-bottom: 6px;
     font-weight: 600;

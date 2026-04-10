@@ -71,35 +71,35 @@ const Categorias = () => {
   return (
     <Layout>
       <div className="header">
-        <h1>Categorías</h1>
+        <h1 className='titulo'>Categorías</h1>
         <button className="btn-primario" onClick={() => abrirModal()}>
           + Nueva Categoría
         </button>
       </div>
 
       <div className="tabla-container">
-        <table>
-          <thead>
+        <table className='table'>
+          <thead className='thead'>
             <tr className="thead">
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Descripción</th>
-              <th>Categoría Padre</th>
-              <th>Productos</th>
-              <th>Acciones</th>
+              <th className="th">ID</th>
+              <th className="th">Nombre</th>
+              <th className="th">Descripción</th>
+              <th className="th">Categoría Padre</th>
+              <th className="th">Productos</th>
+              <th className="th">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {categorias.map((c) => (
               <tr key={c.id_categoria}>
-                <td>{c.id_categoria}</td>
-                <td>{c.nombre_categoria}</td>
-                <td>{c.descripcion || '—'}</td>
-                <td>{c.categoria_padre || '—'}</td>
-                <td>
+                <td className='th'>{c.id_categoria}</td>
+                <td className='td'>{c.nombre_categoria}</td>
+                <td className='td'>{c.descripcion || '—'}</td>
+                <td className='td'>{c.categoria_padre || '—'}</td>
+                <td className='td'>
                   <span className="badge badge-azul">{c.total_productos}</span>
                 </td>
-                <td>
+                <td className='td'>
                   <button className="btn-editar" onClick={() => abrirModal(c)}>Editar</button>
                   <button className="btn-eliminar" onClick={() => handleEliminar(c.id_categoria)}>Eliminar</button>
                 </td>
@@ -115,7 +115,7 @@ const Categorias = () => {
             <h2 className="modal-titulo">{categoriaEditar ? 'Editar Categoría' : 'Nueva Categoría'}</h2>
             <form onSubmit={handleSubmit}>
               <div className="campo">
-                <label>Nombre</label>
+                <label className="label">Nombre</label>
                 <input
                   className="input"
                   type="text"
@@ -125,7 +125,7 @@ const Categorias = () => {
                 />
               </div>
               <div className="campo">
-                <label>Descripción</label>
+                <label className="label">Descripción</label>
                 <input
                   className="input"
                   type="text"
@@ -134,7 +134,7 @@ const Categorias = () => {
                 />
               </div>
               <div className="campo">
-                <label>Categoría Padre (opcional)</label>
+                <label className="label">Categoría Padre (opcional)</label>
                 <select
                   className="input"
                   value={form.id_categoria_padre}

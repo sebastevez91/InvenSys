@@ -63,7 +63,7 @@ const Login = () => {
 
           {error && <p className="error">{error}</p>}
 
-          <button type="submit" disabled={cargando}>
+          <button type="submit" className="button" disabled={cargando}>
             {cargando ? 'Ingresando...' : 'Ingresar'}
           </button>
         </form>

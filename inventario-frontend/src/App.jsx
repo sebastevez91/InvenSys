@@ -6,7 +6,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Dashboard from './pages/Dashboard';
 import Productos from './pages/Productos/Productos';
 import Categorias from './pages/Categorias/Categorias';
-import Proveedores from './pages/Proveedores';
+import Proveedores from './pages/Proveedores/Proveedores';
 import Compras from './pages/Compras';
 import Ventas from './pages/Ventas';
 import Login from './pages/Login/Login';

@@ -6,11 +6,13 @@ const stockRoutes      = require('./stock.routes');
 const proveedoresRoutes = require('./proveedores.routes');
 const comprasRoutes = require('./compras.routes');
 const ventasRoutes = require('./ventas.routes');
+const dashboardRoutes = require('./dashboard.routes');
 
 const router = Router();
 
 router.use('/auth', authRoutes);
 router.use('/productos', productosRoutes);
+router.use('/dashboard', dashboardRoutes);
 router.use('/categorias', categoriasRoutes);
 router.use('/stock', stockRoutes);
 router.use('/proveedores', proveedoresRoutes);

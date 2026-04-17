@@ -1,71 +1,76 @@
-const { getConnection } = require('../config/database');
+// src/controllers/dashboard.controller.js
+const { getPool } = require('../config/database');
 
 const getDashboardData = async (req, res) => {
   try {
-    const pool = await getConnection();
+    const pool = await getPool();
 
-    // KPI: total de productos
+    // KPI: total de productos activos
     const totalProductos = await pool.request()
-      .query('SELECT COUNT(*) as total FROM Productos');
+      .query(`SELECT COUNT(*) as total FROM PRODUCTOS WHERE estado = 1`);
 
-    // KPI: ventas del mes actual
+    // KPI: ventas del mes actual (solo completadas)
     const ventasMes = await pool.request()
       .query(`
         SELECT ISNULL(SUM(total), 0) as total
-        FROM Ventas
-        WHERE MONTH(fecha) = MONTH(GETDATE())
-        AND YEAR(fecha) = YEAR(GETDATE())
+        FROM VENTAS
+        WHERE estado = 'completada'
+          AND MONTH(fecha_venta) = MONTH(GETDATE())
+          AND YEAR(fecha_venta) = YEAR(GETDATE())
       `);
 
-    // KPI: compras del mes actual
+    // KPI: compras del mes actual (solo recibidas)
     const comprasMes = await pool.request()
       .query(`
         SELECT ISNULL(SUM(total), 0) as total
-        FROM Compras
-        WHERE MONTH(fecha) = MONTH(GETDATE())
-        AND YEAR(fecha) = YEAR(GETDATE())
+        FROM COMPRAS
+        WHERE estado = 'recibida'
+          AND MONTH(fecha_compra) = MONTH(GETDATE())
+          AND YEAR(fecha_compra) = YEAR(GETDATE())
       `);
 
-    // KPI: productos con stock bajo
+    // KPI: productos con stock bajo (usando la vista que ya tenés)
     const stockBajo = await pool.request()
-      .query(`
-        SELECT COUNT(*) as total
-        FROM Productos
-        WHERE stock <= stock_minimo
-      `);
+      .query(`SELECT COUNT(*) as total FROM VW_STOCK_BAJO`);
 
     // GRÁFICO: ventas por mes (últimos 6 meses)
     const ventasPorMes = await pool.request()
       .query(`
-        SELECT 
-          FORMAT(fecha, 'MMM', 'es-AR') as mes,
-          MONTH(fecha) as num_mes,
-          YEAR(fecha) as anio,
+        SELECT
+          FORMAT(fecha_venta, 'MMM', 'es-AR') as mes,
+          MONTH(fecha_venta) as num_mes,
+          YEAR(fecha_venta) as anio,
           SUM(total) as total
-        FROM Ventas
-        WHERE fecha >= DATEADD(MONTH, -5, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))
-        GROUP BY YEAR(fecha), MONTH(fecha), FORMAT(fecha, 'MMM', 'es-AR')
+        FROM VENTAS
+        WHERE estado = 'completada'
+          AND fecha_venta >= DATEADD(MONTH, -5, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))
+        GROUP BY YEAR(fecha_venta), MONTH(fecha_venta), FORMAT(fecha_venta, 'MMM', 'es-AR')
         ORDER BY anio, num_mes
       `);
 
     // GRÁFICO: stock por categoría
     const stockPorCategoria = await pool.request()
       .query(`
-        SELECT 
-          c.nombre as categoria,
-          SUM(p.stock) as total_stock
-        FROM Productos p
-        INNER JOIN Categorias c ON p.id_categoria = c.id_categoria
-        GROUP BY c.nombre
+        SELECT
+          c.nombre_categoria as categoria,
+          SUM(s.cantidad_actual) as total_stock
+        FROM STOCK s
+        INNER JOIN PRODUCTOS p   ON s.id_producto  = p.id_producto
+        INNER JOIN CATEGORIAS c  ON p.id_categoria = c.id_categoria
+        WHERE p.estado = 1
+        GROUP BY c.nombre_categoria
       `);
 
-    // TABLA: productos con stock bajo (detalle)
+    // TABLA: detalle productos con stock bajo (usando la vista)
     const productosStockBajo = await pool.request()
       .query(`
-        SELECT TOP 5 nombre, stock, stock_minimo
-        FROM Productos
-        WHERE stock <= stock_minimo
-        ORDER BY stock ASC
+        SELECT TOP 5
+          nombre,
+          cantidad_actual as stock,
+          punto_reorden as stock_minimo,
+          nombre_almacen
+        FROM VW_STOCK_BAJO
+        ORDER BY cantidad_actual ASC
       `);
 
     res.json({

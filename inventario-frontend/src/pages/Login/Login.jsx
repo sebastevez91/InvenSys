@@ -35,7 +35,7 @@ const Login = () => {
       <div className="login-card">
 
         <div className="login-logo">
-          <div className="login-logo-icon">IS</div>
+          <img src="../../../public/logo_InvenSys.png" alt="Logo InvenSys" className="login-logo-img" />
         </div>
 
         <h1 className="login-title">InvenSys</h1>

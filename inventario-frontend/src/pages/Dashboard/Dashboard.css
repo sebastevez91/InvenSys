@@ -1,0 +1,228 @@
+/* ── Wrapper ─────────────────────────────────────────────── */
+.dash-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1200px;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.dash-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.dash-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 2px;
+}
+
+.dash-subtitle {
+  font-size: 13px;
+  color: #d6dbe3;;
+  margin: 0;
+}
+
+/* ── KPIs ────────────────────────────────────────────────── */
+.dash-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .dash-kpis { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 500px) {
+  .dash-kpis { grid-template-columns: 1fr; }
+}
+
+.kpi-card {
+  border-radius: 14px;
+  border: 1px solid transparent;
+  padding: 20px 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+.kpi-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.kpi-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.kpi-titulo {
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin: 0;
+  opacity: 0.75;
+}
+
+.kpi-valor {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+/* Variantes de color */
+.kpi-indigo {
+  background-color: #eef2ff;
+  border-color: #c7d2fe;
+  color: #4338ca;
+}
+
+.kpi-green {
+  background-color: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #15803d;
+}
+
+.kpi-yellow {
+  background-color: #fffbeb;
+  border-color: #fde68a;
+  color: #b45309;
+}
+
+.kpi-red {
+  background-color: #fff1f2;
+  border-color: #fecdd3;
+  color: #be123c;
+}
+
+/* ── Cards genéricas ─────────────────────────────────────── */
+.dash-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 22px 24px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.dash-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  margin: 0 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Gráficos ────────────────────────────────────────────── */
+.dash-charts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .dash-charts { grid-template-columns: 1fr; }
+}
+
+/* ── Tabla ───────────────────────────────────────────────── */
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.dash-table thead tr {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dash-table th {
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding-bottom: 10px;
+}
+
+.dash-table td {
+  padding: 10px 0;
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.dash-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.dash-table tbody tr:hover td {
+  background-color: #f8fafc;
+}
+
+.dash-table .text-center {
+  text-align: center;
+}
+
+.dash-table .font-medium {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.dash-table .muted {
+  color: #94a3b8;
+}
+
+/* ── Badges ──────────────────────────────────────────────── */
+.dash-badge-red {
+  background-color: #fff1f2;
+  color: #be123c;
+  border: 1px solid #fecdd3;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 20px;
+}
+
+/* ── Estados ─────────────────────────────────────────────── */
+.dash-loading {
+  padding: 60px;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.dash-error {
+  padding: 60px;
+  text-align: center;
+  color: #be123c;
+  font-size: 14px;
+}
+
+.dash-empty {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 13px;
+  padding: 32px 0;
+}
+
+.dash-ok {
+  color: #15803d;
+  font-size: 13.5px;
+  margin: 0;
+}

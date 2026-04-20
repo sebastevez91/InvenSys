@@ -31,13 +31,18 @@ const Login = () => {
   };
 
   return (
-    <div className="container">
-      <div className="card">
-        <h1>InvenSys</h1>
-        <p className="subtitulo">Sistema de Gestión de Inventario</p>
+    <div className="login-bg">
+      <div className="login-card">
 
-        <form onSubmit={handleSubmit}>
-          <div className="campo">
+        <div className="login-logo">
+          <div className="login-logo-icon">IS</div>
+        </div>
+
+        <h1 className="login-title">InvenSys</h1>
+        <p className="login-subtitle">Sistema de Gestión de Inventario</p>
+
+        <form onSubmit={handleSubmit} className="login-form">
+          <div className="login-campo">
             <label>Usuario</label>
             <input
               type="text"
@@ -46,10 +51,11 @@ const Login = () => {
               onChange={handleChange}
               placeholder="Ingresá tu usuario"
               required
+              autoComplete="username"
             />
           </div>
 
-          <div className="campo">
+          <div className="login-campo">
             <label>Contraseña</label>
             <input
               type="password"
@@ -58,19 +64,28 @@ const Login = () => {
               onChange={handleChange}
               placeholder="Ingresá tu contraseña"
               required
+              autoComplete="current-password"
             />
           </div>
 
-          {error && <p className="error">{error}</p>}
+          {error && (
+            <div className="login-error">
+              <span>⚠</span> {error}
+            </div>
+          )}
 
-          <button type="submit" className="button" disabled={cargando}>
-            {cargando ? 'Ingresando...' : 'Ingresar'}
+          <button type="submit" className="login-button" disabled={cargando}>
+            {cargando ? (
+              <span className="login-loading">
+                <span className="login-spinner" /> Ingresando...
+              </span>
+            ) : 'Ingresar'}
           </button>
         </form>
+
       </div>
     </div>
   );
 };
-
 
 export default Login;

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Layout from '../../components/Layout/Layout';
 import { getProductos, createProducto, updateProducto, deleteProducto } from '../../services/productos.service';
+import '../../styles/shared.css';
 
 const Productos = () => {
   const [productos, setProductos] = useState([]);
@@ -29,15 +30,12 @@ const Productos = () => {
     }
   };
 
-  useEffect(() => {
-    cargarProductos();
-  }, [pagina, busqueda]);
+  useEffect(() => { cargarProductos(); }, [pagina, busqueda]);
 
   const abrirModal = (producto = null) => {
     if (producto) {
       setForm({
-        sku: producto.sku,
-        nombre: producto.nombre,
+        sku: producto.sku, nombre: producto.nombre,
         descripcion: producto.descripcion || '',
         id_categoria: producto.id_categoria,
         precio_venta: producto.precio_venta,
@@ -52,45 +50,36 @@ const Productos = () => {
     setModal(true);
   };
 
-  const cerrarModal = () => {
-    setModal(false);
-    setProductoEditar(null);
-  };
+  const cerrarModal = () => { setModal(false); setProductoEditar(null); };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (productoEditar) {
-        await updateProducto(productoEditar.id_producto, form);
-      } else {
-        await createProducto(form);
-      }
+      if (productoEditar) await updateProducto(productoEditar.id_producto, form);
+      else await createProducto(form);
       cerrarModal();
       cargarProductos();
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) { console.error(error); }
   };
 
   const handleEliminar = async (id) => {
     if (!window.confirm('¿Desactivar este producto?')) return;
-    try {
-      await deleteProducto(id);
-      cargarProductos();
-    } catch (error) {
-      console.error(error);
-    }
+    try { await deleteProducto(id); cargarProductos(); }
+    catch (error) { console.error(error); }
   };
 
   return (
     <Layout>
-      <div className='header'>
-        <h1 className='titulo'>Productos</h1>
-        <button className='btn-primario' onClick={() => abrirModal()}>+ Nuevo Producto</button>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">Productos</h1>
+          <p className="page-subtitle">Gestión del catálogo de productos</p>
+        </div>
+        <button className="btn-primario" onClick={() => abrirModal()}>+ Nuevo Producto</button>
       </div>
 
       <input
-        className='buscador'
+        className="buscador"
         type="text"
         placeholder="Buscar por nombre o SKU..."
         value={busqueda}
@@ -98,9 +87,9 @@ const Productos = () => {
       />
 
       {cargando ? (
-        <p>Cargando...</p>
+        <p className="estado-cargando">Cargando productos...</p>
       ) : (
-        <div className='tabla-container'>
+        <div className="tabla-container">
           <table>
             <thead>
               <tr>
@@ -108,31 +97,31 @@ const Productos = () => {
                 <th>Nombre</th>
                 <th>Categoría</th>
                 <th>Precio Venta</th>
-                <th>Stock</th>
-                <th>Estado</th>
+                <th className="col-center">Stock</th>
+                <th className="col-center">Estado</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {productos.map((p) => (
                 <tr key={p.id_producto}>
-                  <td>{p.sku}</td>
-                  <td>{p.nombre}</td>
+                  <td className="col-mono">{p.sku}</td>
+                  <td className="col-bold">{p.nombre}</td>
                   <td>{p.nombre_categoria}</td>
                   <td>${Number(p.precio_venta).toLocaleString()}</td>
-                  <td>
-                    <span  className={'badge ' + (p.stock_bajo ? 'badge-rojo' : 'badge-verde')} >
-                      {p.stock_total} {p.stock_bajo ? '⚠️' : ''}
+                  <td className="col-center">
+                    <span className={`badge ${p.stock_bajo ? 'badge-rojo' : 'badge-verde'}`}>
+                      {p.stock_total}{p.stock_bajo ? ' ⚠️' : ''}
                     </span>
                   </td>
-                  <td>
-                    <span  className={'badge ' + (p.estado ? 'badge-verde' : 'badge-gris')} >
+                  <td className="col-center">
+                    <span className={`badge ${p.estado ? 'badge-verde' : 'badge-gris'}`}>
                       {p.estado ? 'Activo' : 'Inactivo'}
                     </span>
                   </td>
                   <td>
-                    <button className='btn-editar' onClick={() => abrirModal(p)}>Editar</button>
-                    <button className='btn-eliminar' onClick={() => handleEliminar(p.id_producto)}>Desactivar</button>
+                    <button className="btn-editar" onClick={() => abrirModal(p)}>Editar</button>
+                    <button className="btn-eliminar" onClick={() => handleEliminar(p.id_producto)}>Desactivar</button>
                   </td>
                 </tr>
               ))}
@@ -141,29 +130,27 @@ const Productos = () => {
         </div>
       )}
 
-      {/* Paginación */}
-      <div className='paginacion'>
-        <button className='btn-pag' disabled={pagina === 1} onClick={() => setPagina(p => p - 1)}>← Anterior</button>
-        <span className='pagina-info'>Página {paginacion.pagina} de {paginacion.paginas}</span>
-        <button className='btn-pag' disabled={pagina === paginacion.paginas} onClick={() => setPagina(p => p + 1)}>Siguiente →</button>
+      <div className="paginacion">
+        <button className="btn-pag" disabled={pagina === 1} onClick={() => setPagina(p => p - 1)}>← Anterior</button>
+        <span className="pagina-info">Página {paginacion.pagina} de {paginacion.paginas}</span>
+        <button className="btn-pag" disabled={pagina === paginacion.paginas} onClick={() => setPagina(p => p + 1)}>Siguiente →</button>
       </div>
 
-      {/* Modal */}
       {modal && (
-        <div className='overlay'>
-          <div className='modal'>
-            <h2 className='modal-titulo'>{productoEditar ? 'Editar Producto' : 'Nuevo Producto'}</h2>
+        <div className="overlay">
+          <div className="modal">
+            <h2 className="modal-titulo">{productoEditar ? 'Editar Producto' : 'Nuevo Producto'}</h2>
             <form onSubmit={handleSubmit}>
               {[
-                { label: 'SKU', name: 'sku' },
-                { label: 'Nombre', name: 'nombre' },
-                { label: 'Descripción', name: 'descripcion' },
-                { label: 'ID Categoría', name: 'id_categoria' },
-                { label: 'Precio Venta', name: 'precio_venta' },
-                { label: 'Precio Costo', name: 'precio_costo' },
+                { label: 'SKU',           name: 'sku' },
+                { label: 'Nombre',        name: 'nombre' },
+                { label: 'Descripción',   name: 'descripcion' },
+                { label: 'ID Categoría',  name: 'id_categoria' },
+                { label: 'Precio Venta',  name: 'precio_venta' },
+                { label: 'Precio Costo',  name: 'precio_costo' },
                 { label: 'Punto Reorden', name: 'punto_reorden' },
               ].map(({ label, name }) => (
-                <div key={name} className='campo'>
+                <div key={name} className="campo">
                   <label>{label}</label>
                   <input
                     type="text"
@@ -173,9 +160,9 @@ const Productos = () => {
                   />
                 </div>
               ))}
-              <div className='modal-botones'>
-                <button type="button" className='btn-cancelar' onClick={cerrarModal}>Cancelar</button>
-                <button type="submit" className='btn-primario'>Guardar</button>
+              <div className="modal-botones">
+                <button type="button" className="btn-cancelar" onClick={cerrarModal}>Cancelar</button>
+                <button type="submit" className="btn-primario">Guardar</button>
               </div>
             </form>
           </div>

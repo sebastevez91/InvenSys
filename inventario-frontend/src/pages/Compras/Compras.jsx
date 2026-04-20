@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Layout from '../../components/Layout/Layout';
 import { getCompras, getCompraById, createCompra } from '../../services/compras.service';
 import { getProveedores } from '../../services/proveedores.service';
+import '../../styles/shared.css';
 
 const Compras = () => {
   const [compras, setCompras] = useState([]);
@@ -17,9 +18,7 @@ const Compras = () => {
       const [comprasRes, provRes] = await Promise.all([getCompras(), getProveedores()]);
       setCompras(comprasRes.data.datos);
       setProveedores(provRes.data.datos);
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) { console.error(error); }
   };
 
   useEffect(() => { cargarDatos(); }, []);
@@ -29,22 +28,18 @@ const Compras = () => {
       const { data } = await getCompraById(id);
       setCompraDetalle(data.dato);
       setDetalleModal(true);
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) { console.error(error); }
   };
 
-  const agregarProducto = () => {
+  const agregarProducto = () =>
     setProductos([...productos, { id_producto: '', id_almacen: '', cantidad: '', precio_unitario: '' }]);
-  };
 
-  const eliminarProducto = (index) => {
-    setProductos(productos.filter((_, i) => i !== index));
-  };
+  const eliminarProducto = (i) =>
+    setProductos(productos.filter((_, idx) => idx !== i));
 
-  const handleProductoChange = (index, field, value) => {
+  const handleProductoChange = (i, field, value) => {
     const nuevos = [...productos];
-    nuevos[index][field] = value;
+    nuevos[i][field] = value;
     setProductos(nuevos);
   };
 
@@ -71,35 +66,36 @@ const Compras = () => {
 
   return (
     <Layout>
-      <div style={styles.header}>
-        <h1 style={styles.titulo}>Compras</h1>
-        <button style={styles.btnPrimario} onClick={() => setModal(true)}>+ Nueva Compra</button>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">Compras</h1>
+          <p className="page-subtitle">Registro de órdenes de compra</p>
+        </div>
+        <button className="btn-primario" onClick={() => setModal(true)}>+ Nueva Compra</button>
       </div>
 
-      <div style={styles.tablaContainer}>
-        <table style={styles.tabla}>
+      <div className="tabla-container">
+        <table>
           <thead>
-            <tr style={styles.thead}>
-              <th style={styles.th}>#</th>
-              <th style={styles.th}>Proveedor</th>
-              <th style={styles.th}>Fecha</th>
-              <th style={styles.th}>Estado</th>
-              <th style={styles.th}>Total</th>
-              <th style={styles.th}>Acciones</th>
+            <tr>
+              <th>#</th>
+              <th>Proveedor</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+              <th>Total</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {compras.map((c) => (
-              <tr key={c.id_compra} style={styles.tr}>
-                <td style={styles.td}>#{c.id_compra}</td>
-                <td style={styles.td}>{c.proveedor}</td>
-                <td style={styles.td}>{new Date(c.fecha_compra).toLocaleDateString()}</td>
-                <td style={styles.td}>
-                  <span style={{ ...styles.badge, ...styles.badgeVerde }}>{c.estado}</span>
-                </td>
-                <td style={styles.td}>${Number(c.total).toLocaleString()}</td>
-                <td style={styles.td}>
-                  <button style={styles.btnEditar} onClick={() => verDetalle(c.id_compra)}>Ver detalle</button>
+              <tr key={c.id_compra}>
+                <td className="col-mono">#{c.id_compra}</td>
+                <td className="col-bold">{c.proveedor}</td>
+                <td>{new Date(c.fecha_compra).toLocaleDateString()}</td>
+                <td><span className="badge badge-verde">{c.estado}</span></td>
+                <td>${Number(c.total).toLocaleString()}</td>
+                <td>
+                  <button className="btn-editar" onClick={() => verDetalle(c.id_compra)}>Ver detalle</button>
                 </td>
               </tr>
             ))}
@@ -109,14 +105,13 @@ const Compras = () => {
 
       {/* Modal nueva compra */}
       {modal && (
-        <div style={styles.overlay}>
-          <div style={styles.modal}>
-            <h2 style={styles.modalTitulo}>Nueva Compra</h2>
+        <div className="overlay">
+          <div className="modal modal-lg">
+            <h2 className="modal-titulo">Nueva Compra</h2>
             <form onSubmit={handleSubmit}>
-              <div style={styles.campo}>
-                <label style={styles.label}>Proveedor</label>
+              <div className="campo">
+                <label>Proveedor</label>
                 <select
-                  style={styles.input}
                   value={form.id_proveedor}
                   onChange={(e) => setForm({ ...form, id_proveedor: e.target.value })}
                   required
@@ -127,38 +122,34 @@ const Compras = () => {
                   ))}
                 </select>
               </div>
-
-              <div style={styles.campo}>
-                <label style={styles.label}>Observaciones</label>
+              <div className="campo">
+                <label>Observaciones</label>
                 <input
-                  style={styles.input}
                   type="text"
                   value={form.observaciones}
                   onChange={(e) => setForm({ ...form, observaciones: e.target.value })}
                 />
               </div>
 
-              <div style={{ marginBottom: '14px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <label style={styles.label}>Productos</label>
-                  <button type="button" style={styles.btnAgregar} onClick={agregarProducto}>+ Agregar</button>
-                </div>
-                {productos.map((p, i) => (
-                  <div key={i} style={styles.productoRow}>
-                    <input style={styles.inputSmall} type="number" placeholder="ID Producto" value={p.id_producto} onChange={(e) => handleProductoChange(i, 'id_producto', e.target.value)} required />
-                    <input style={styles.inputSmall} type="number" placeholder="ID Almacén" value={p.id_almacen} onChange={(e) => handleProductoChange(i, 'id_almacen', e.target.value)} required />
-                    <input style={styles.inputSmall} type="number" placeholder="Cantidad" value={p.cantidad} onChange={(e) => handleProductoChange(i, 'cantidad', e.target.value)} required />
-                    <input style={styles.inputSmall} type="number" placeholder="Precio Unit." value={p.precio_unitario} onChange={(e) => handleProductoChange(i, 'precio_unitario', e.target.value)} required />
-                    {productos.length > 1 && (
-                      <button type="button" style={styles.btnEliminarFila} onClick={() => eliminarProducto(i)}>✕</button>
-                    )}
-                  </div>
-                ))}
+              <div className="productos-header">
+                <label>Productos</label>
+                <button type="button" className="btn-agregar" onClick={agregarProducto}>+ Agregar</button>
               </div>
+              {productos.map((p, i) => (
+                <div key={i} className="producto-row">
+                  <input type="number" placeholder="ID Producto"  value={p.id_producto}     onChange={(e) => handleProductoChange(i, 'id_producto', e.target.value)}     required />
+                  <input type="number" placeholder="ID Almacén"   value={p.id_almacen}      onChange={(e) => handleProductoChange(i, 'id_almacen', e.target.value)}      required />
+                  <input type="number" placeholder="Cantidad"     value={p.cantidad}         onChange={(e) => handleProductoChange(i, 'cantidad', e.target.value)}         required />
+                  <input type="number" placeholder="Precio Unit." value={p.precio_unitario}  onChange={(e) => handleProductoChange(i, 'precio_unitario', e.target.value)}  required />
+                  {productos.length > 1 && (
+                    <button type="button" className="btn-eliminar-fila" onClick={() => eliminarProducto(i)}>✕</button>
+                  )}
+                </div>
+              ))}
 
-              <div style={styles.modalBotones}>
-                <button type="button" style={styles.btnCancelar} onClick={() => setModal(false)}>Cancelar</button>
-                <button type="submit" style={styles.btnPrimario}>Registrar Compra</button>
+              <div className="modal-botones">
+                <button type="button" className="btn-cancelar" onClick={() => setModal(false)}>Cancelar</button>
+                <button type="submit" className="btn-primario">Registrar Compra</button>
               </div>
             </form>
           </div>
@@ -167,75 +158,42 @@ const Compras = () => {
 
       {/* Modal detalle */}
       {detalleModal && compraDetalle && (
-        <div style={styles.overlay}>
-          <div style={styles.modal}>
-            <h2 style={styles.modalTitulo}>Compra #{compraDetalle.id_compra}</h2>
-            <p style={styles.detalleInfo}><strong>Proveedor:</strong> {compraDetalle.proveedor}</p>
-            <p style={styles.detalleInfo}><strong>Fecha:</strong> {new Date(compraDetalle.fecha_compra).toLocaleDateString()}</p>
-            <p style={styles.detalleInfo}><strong>Estado:</strong> {compraDetalle.estado}</p>
-            <p style={styles.detalleInfo}><strong>Observaciones:</strong> {compraDetalle.observaciones || '—'}</p>
-            <table style={{ ...styles.tabla, marginTop: '16px' }}>
-              <thead>
-                <tr style={styles.thead}>
-                  <th style={styles.th}>SKU</th>
-                  <th style={styles.th}>Producto</th>
-                  <th style={styles.th}>Cantidad</th>
-                  <th style={styles.th}>Precio Unit.</th>
-                  <th style={styles.th}>Subtotal</th>
-                </tr>
-              </thead>
-              <tbody>
-                {compraDetalle.detalles?.map((d) => (
-                  <tr key={d.id_detalle_compra} style={styles.tr}>
-                    <td style={styles.td}>{d.sku}</td>
-                    <td style={styles.td}>{d.producto}</td>
-                    <td style={styles.td}>{d.cantidad}</td>
-                    <td style={styles.td}>${Number(d.precio_unitario).toLocaleString()}</td>
-                    <td style={styles.td}>${Number(d.subtotal).toLocaleString()}</td>
+        <div className="overlay">
+          <div className="modal modal-lg">
+            <h2 className="modal-titulo">Compra #{compraDetalle.id_compra}</h2>
+            <p className="detalle-info"><strong>Proveedor:</strong> {compraDetalle.proveedor}</p>
+            <p className="detalle-info"><strong>Fecha:</strong> {new Date(compraDetalle.fecha_compra).toLocaleDateString()}</p>
+            <p className="detalle-info"><strong>Estado:</strong> {compraDetalle.estado}</p>
+            <p className="detalle-info"><strong>Observaciones:</strong> {compraDetalle.observaciones || '—'}</p>
+            <div className="tabla-container" style={{ marginTop: '16px' }}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>SKU</th><th>Producto</th><th>Cantidad</th><th>Precio Unit.</th><th>Subtotal</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            <p style={{ textAlign: 'right', marginTop: '12px', fontWeight: 'bold', fontSize: '16px' }}>
-              Total: ${Number(compraDetalle.total).toLocaleString()}
-            </p>
-            <div style={styles.modalBotones}>
-              <button style={styles.btnPrimario} onClick={() => setDetalleModal(false)}>Cerrar</button>
+                </thead>
+                <tbody>
+                  {compraDetalle.detalles?.map((d) => (
+                    <tr key={d.id_detalle_compra}>
+                      <td className="col-mono">{d.sku}</td>
+                      <td>{d.producto}</td>
+                      <td>{d.cantidad}</td>
+                      <td>${Number(d.precio_unitario).toLocaleString()}</td>
+                      <td>${Number(d.subtotal).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="detalle-total">Total: ${Number(compraDetalle.total).toLocaleString()}</p>
+            <div className="modal-botones">
+              <button className="btn-primario" onClick={() => setDetalleModal(false)}>Cerrar</button>
             </div>
           </div>
         </div>
       )}
     </Layout>
   );
-};
-
-const styles = {
-  header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' },
-  titulo: { fontSize: '24px', fontWeight: 'bold', color: '#1a1a2e' },
-  btnPrimario: { backgroundColor: '#4f46e5', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '600' },
-  tablaContainer: { backgroundColor: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' },
-  tabla: { width: '100%', borderCollapse: 'collapse' },
-  thead: { backgroundColor: '#f8f9fa' },
-  th: { padding: '14px 16px', textAlign: 'left', fontSize: '13px', fontWeight: '600', color: '#555', borderBottom: '1px solid #eee' },
-  tr: { borderBottom: '1px solid #f0f0f0' },
-  td: { padding: '12px 16px', fontSize: '14px', color: '#333' },
-  badge: { padding: '4px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: '600' },
-  badgeVerde: { backgroundColor: '#d1fae5', color: '#065f46' },
-  btnEditar: { backgroundColor: '#e0e7ff', color: '#4f46e5', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' },
-  overlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 },
-  modal: { backgroundColor: '#fff', borderRadius: '12px', padding: '30px', width: '100%', maxWidth: '560px', maxHeight: '90vh', overflowY: 'auto' },
-  modalTitulo: { fontSize: '20px', fontWeight: 'bold', marginBottom: '16px', color: '#1a1a2e' },
-  campo: { marginBottom: '14px' },
-  label: { display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px', color: '#333' },
-  input: { width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '14px', boxSizing: 'border-box' },
-  productoRow: { display: 'flex', gap: '8px', marginBottom: '8px', alignItems: 'center' },
-  inputSmall: { flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #ddd', fontSize: '13px' },
-  btnAgregar: { backgroundColor: '#d1fae5', color: '#065f46', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: '600' },
-  btnEliminarFila: { backgroundColor: '#fee2e2', color: '#dc2626', border: 'none', padding: '6px 8px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' },
-  modalBotones: { display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' },
-  btnCancelar: { padding: '9px 18px', borderRadius: '8px', border: '1px solid #ddd', backgroundColor: '#fff', cursor: 'pointer', fontSize: '14px' },
-  btnEliminar: { backgroundColor: '#fee2e2', color: '#dc2626', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' },
-  detalleInfo: { marginBottom: '6px', fontSize: '14px', color: '#333' },
 };
 
 export default Compras;

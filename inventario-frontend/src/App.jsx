@@ -3,7 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Pages (las vamos a crear después)
 
-import Dashboard from './pages/Dashboard';
+import Dashboard from './pages/Dashboard/Dashboard';
 import Productos from './pages/Productos/Productos';
 import Categorias from './pages/Categorias/Categorias';
 import Proveedores from './pages/Proveedores/Proveedores';

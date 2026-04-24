@@ -37,7 +37,6 @@ const Login = () => {
         <div className="login-logo">
           <img src="../../../public/logo_InvenSys.png" alt="Logo InvenSys" className="login-logo-img" />
         </div>
-
         <h1 className="login-title">InvenSys</h1>
         <p className="login-subtitle">Sistema de Gestión de Inventario</p>
 

@@ -2,16 +2,22 @@ import { useState, useEffect } from 'react';
 import Layout from '../../components/Layout/Layout';
 import { getCompras, getCompraById, createCompra } from '../../services/compras.service';
 import { getProveedores } from '../../services/proveedores.service';
+import { getProductos } from '../../services/productos.service';
+import { getAlmacenes } from '../../services/almacenes.service';
 import '../../styles/shared.css';
 
 const Compras = () => {
   const [compras, setCompras] = useState([]);
   const [proveedores, setProveedores] = useState([]);
+  const [productos, setProductos] = useState([]);
+  const [almacenes, setAlmacenes] = useState([]);
   const [modal, setModal] = useState(false);
   const [detalleModal, setDetalleModal] = useState(false);
   const [compraDetalle, setCompraDetalle] = useState(null);
   const [form, setForm] = useState({ id_proveedor: '', observaciones: '' });
-  const [productos, setProductos] = useState([{ id_producto: '', id_almacen: '', cantidad: '', precio_unitario: '' }]);
+  const [lineas, setLineas] = useState([
+    { id_producto: '', id_almacen: '', cantidad: '', precio_unitario: '' }
+  ]);
 
   const cargarDatos = async () => {
     try {
@@ -20,6 +26,16 @@ const Compras = () => {
       setProveedores(provRes.data.datos);
     } catch (error) { console.error(error); }
   };
+
+  // Carga productos y almacenes una sola vez al montar
+  useEffect(() => {
+    Promise.all([getProductos({ limite: 1000 }), getAlmacenes()])
+      .then(([prodRes, almRes]) => {
+        setProductos(prodRes.data.datos);
+        setAlmacenes(almRes.data.datos);
+      })
+      .catch(console.error);
+  }, []);
 
   useEffect(() => { cargarDatos(); }, []);
 
@@ -31,16 +47,29 @@ const Compras = () => {
     } catch (error) { console.error(error); }
   };
 
-  const agregarProducto = () =>
-    setProductos([...productos, { id_producto: '', id_almacen: '', cantidad: '', precio_unitario: '' }]);
+  const agregarLinea = () =>
+    setLineas([...lineas, { id_producto: '', id_almacen: '', cantidad: '', precio_unitario: '' }]);
 
-  const eliminarProducto = (i) =>
-    setProductos(productos.filter((_, idx) => idx !== i));
+  const eliminarLinea = (i) =>
+    setLineas(lineas.filter((_, idx) => idx !== i));
 
-  const handleProductoChange = (i, field, value) => {
-    const nuevos = [...productos];
-    nuevos[i][field] = value;
-    setProductos(nuevos);
+  const handleLineaChange = (i, field, value) => {
+    const nuevas = [...lineas];
+    nuevas[i][field] = value;
+
+    // Al seleccionar producto, pre-completar precio_unitario con precio_costo
+    if (field === 'id_producto' && value) {
+      const prod = productos.find(p => p.id_producto === parseInt(value));
+      if (prod) nuevas[i].precio_unitario = prod.precio_costo;
+    }
+
+    setLineas(nuevas);
+  };
+
+  const resetModal = () => {
+    setForm({ id_proveedor: '', observaciones: '' });
+    setLineas([{ id_producto: '', id_almacen: '', cantidad: '', precio_unitario: '' }]);
+    setModal(false);
   };
 
   const handleSubmit = async (e) => {
@@ -48,16 +77,14 @@ const Compras = () => {
     try {
       await createCompra({
         ...form,
-        productos: productos.map(p => ({
-          id_producto: parseInt(p.id_producto),
-          id_almacen: parseInt(p.id_almacen),
-          cantidad: parseInt(p.cantidad),
-          precio_unitario: parseFloat(p.precio_unitario),
+        productos: lineas.map(l => ({
+          id_producto:     parseInt(l.id_producto),
+          id_almacen:      parseInt(l.id_almacen),
+          cantidad:        parseInt(l.cantidad),
+          precio_unitario: parseFloat(l.precio_unitario),
         })),
       });
-      setModal(false);
-      setForm({ id_proveedor: '', observaciones: '' });
-      setProductos([{ id_producto: '', id_almacen: '', cantidad: '', precio_unitario: '' }]);
+      resetModal();
       cargarDatos();
     } catch (error) {
       alert(error.response?.data?.message || 'Error al registrar compra');
@@ -109,6 +136,7 @@ const Compras = () => {
           <div className="modal modal-lg">
             <h2 className="modal-titulo">Nueva Compra</h2>
             <form onSubmit={handleSubmit}>
+
               <div className="campo">
                 <label>Proveedor</label>
                 <select
@@ -122,6 +150,7 @@ const Compras = () => {
                   ))}
                 </select>
               </div>
+
               <div className="campo">
                 <label>Observaciones</label>
                 <input
@@ -133,22 +162,65 @@ const Compras = () => {
 
               <div className="productos-header">
                 <label>Productos</label>
-                <button type="button" className="btn-agregar" onClick={agregarProducto}>+ Agregar</button>
+                <button type="button" className="btn-agregar" onClick={agregarLinea}>+ Agregar</button>
               </div>
-              {productos.map((p, i) => (
+
+              {lineas.map((linea, i) => (
                 <div key={i} className="producto-row">
-                  <input type="number" placeholder="ID Producto"  value={p.id_producto}     onChange={(e) => handleProductoChange(i, 'id_producto', e.target.value)}     required />
-                  <input type="number" placeholder="ID Almacén"   value={p.id_almacen}      onChange={(e) => handleProductoChange(i, 'id_almacen', e.target.value)}      required />
-                  <input type="number" placeholder="Cantidad"     value={p.cantidad}         onChange={(e) => handleProductoChange(i, 'cantidad', e.target.value)}         required />
-                  <input type="number" placeholder="Precio Unit." value={p.precio_unitario}  onChange={(e) => handleProductoChange(i, 'precio_unitario', e.target.value)}  required />
-                  {productos.length > 1 && (
-                    <button type="button" className="btn-eliminar-fila" onClick={() => eliminarProducto(i)}>✕</button>
+
+                  <select
+                    value={linea.id_producto}
+                    onChange={(e) => handleLineaChange(i, 'id_producto', e.target.value)}
+                    required
+                  >
+                    <option value="">— Producto —</option>
+                    {productos.map(p => (
+                      <option key={p.id_producto} value={p.id_producto}>
+                        {p.sku} — {p.nombre}
+                      </option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={linea.id_almacen}
+                    onChange={(e) => handleLineaChange(i, 'id_almacen', e.target.value)}
+                    required
+                  >
+                    <option value="">— Almacén —</option>
+                    {almacenes.map(a => (
+                      <option key={a.id_almacen} value={a.id_almacen}>
+                        {a.nombre_almacen}
+                      </option>
+                    ))}
+                  </select>
+
+                  <input
+                    type="number"
+                    placeholder="Cantidad"
+                    min="1"
+                    value={linea.cantidad}
+                    onChange={(e) => handleLineaChange(i, 'cantidad', e.target.value)}
+                    required
+                  />
+
+                  <input
+                    type="number"
+                    placeholder="Precio Unit."
+                    min="0"
+                    step="0.01"
+                    value={linea.precio_unitario}
+                    onChange={(e) => handleLineaChange(i, 'precio_unitario', e.target.value)}
+                    required
+                  />
+
+                  {lineas.length > 1 && (
+                    <button type="button" className="btn-eliminar-fila" onClick={() => eliminarLinea(i)}>✕</button>
                   )}
                 </div>
               ))}
 
               <div className="modal-botones">
-                <button type="button" className="btn-cancelar" onClick={() => setModal(false)}>Cancelar</button>
+                <button type="button" className="btn-cancelar" onClick={resetModal}>Cancelar</button>
                 <button type="submit" className="btn-primario">Registrar Compra</button>
               </div>
             </form>

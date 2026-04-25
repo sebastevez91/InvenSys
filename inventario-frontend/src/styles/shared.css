@@ -428,3 +428,21 @@
   color: #94a3b8;
   font-size: 14px;
 }
+
+.producto-row select {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #334155;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.producto-row select:focus {
+  border-color: #94a3b8;
+}

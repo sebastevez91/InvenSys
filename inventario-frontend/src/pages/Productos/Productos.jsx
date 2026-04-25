@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import Layout from '../../components/Layout/Layout';
 import { getProductos, createProducto, updateProducto, deleteProducto } from '../../services/productos.service';
+import { getCategorias } from '../../services/categorias.service';
 import '../../styles/shared.css';
 
 const Productos = () => {
   const [productos, setProductos] = useState([]);
   const [paginacion, setPaginacion] = useState({});
+  const [categorias, setCategorias] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [pagina, setPagina] = useState(1);
   const [cargando, setCargando] = useState(false);
@@ -29,6 +31,13 @@ const Productos = () => {
       setCargando(false);
     }
   };
+
+  // Carga categorías una sola vez al montar
+  useEffect(() => {
+    getCategorias()
+      .then(({ data }) => setCategorias(data.datos))
+      .catch(console.error);
+  }, []);
 
   useEffect(() => { cargarProductos(); }, [pagina, busqueda]);
 
@@ -67,6 +76,18 @@ const Productos = () => {
     try { await deleteProducto(id); cargarProductos(); }
     catch (error) { console.error(error); }
   };
+
+  // Campos de texto del formulario (sin id_categoria, que se maneja aparte)
+  const camposTexto = [
+    { label: 'SKU',           name: 'sku' },
+    { label: 'Nombre',        name: 'nombre' },
+    { label: 'Descripción',   name: 'descripcion' },
+    { label: 'Precio Venta',  name: 'precio_venta' },
+    { label: 'Precio Costo',  name: 'precio_costo' },
+    { label: 'Punto Reorden', name: 'punto_reorden' },
+  ];
+
+  const requeridos = ['sku', 'nombre', 'id_categoria', 'precio_venta', 'precio_costo'];
 
   return (
     <Layout>
@@ -140,26 +161,37 @@ const Productos = () => {
         <div className="overlay">
           <div className="modal">
             <h2 className="modal-titulo">{productoEditar ? 'Editar Producto' : 'Nuevo Producto'}</h2>
-            <form onSubmit={handleSubmit}>
-              {[
-                { label: 'SKU',           name: 'sku' },
-                { label: 'Nombre',        name: 'nombre' },
-                { label: 'Descripción',   name: 'descripcion' },
-                { label: 'ID Categoría',  name: 'id_categoria' },
-                { label: 'Precio Venta',  name: 'precio_venta' },
-                { label: 'Precio Costo',  name: 'precio_costo' },
-                { label: 'Punto Reorden', name: 'punto_reorden' },
-              ].map(({ label, name }) => (
-                <div key={name} className="campo">
-                  <label>{label}</label>
-                  <input
-                    type="text"
-                    value={form[name]}
-                    onChange={(e) => setForm({ ...form, [name]: e.target.value })}
-                    required={['sku', 'nombre', 'id_categoria', 'precio_venta', 'precio_costo'].includes(name)}
-                  />
-                </div>
+              <form onSubmit={handleSubmit}>
+
+                {camposTexto.map(({ label, name }) => (
+                  <div key={name} className="campo">
+                    <label>{label}</label>
+                    <input
+                      type="text"
+                      value={form[name]}
+                      onChange={(e) => setForm({ ...form, [name]: e.target.value })}
+                      required={requeridos.includes(name)}
+                    />
+                  </div>
               ))}
+
+              {/* Select de categoría */}
+              <div className="campo">
+                <label>Categoría</label>
+                <select
+                  value={form.id_categoria}
+                  onChange={(e) => setForm({ ...form, id_categoria: e.target.value })}
+                  required
+                >
+                  <option value="">-- Seleccionar categoría --</option>
+                  {categorias.map((cat) => (
+                    <option key={cat.id_categoria} value={cat.id_categoria}>
+                      {cat.nombre_categoria}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="modal-botones">
                 <button type="button" className="btn-cancelar" onClick={cerrarModal}>Cancelar</button>
                 <button type="submit" className="btn-primario">Guardar</button>

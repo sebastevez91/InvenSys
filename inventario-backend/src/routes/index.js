@@ -7,10 +7,12 @@ const proveedoresRoutes = require('./proveedores.routes');
 const comprasRoutes = require('./compras.routes');
 const ventasRoutes = require('./ventas.routes');
 const dashboardRoutes = require('./dashboard.routes');
+const almacenes = require('./almacenes.routes');
 
 const router = Router();
 
 router.use('/auth', authRoutes);
+router.use('/almacenes', almacenes);
 router.use('/productos', productosRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/categorias', categoriasRoutes);

@@ -24,6 +24,12 @@ Sistema web completo de gestión de inventario desarrollado como proyecto de por
 
 ---
 
+## 🔐 Acceso demo
+
+| Usuario | Contraseña |
+|---------|------------|
+| admin   | password   |
+
 ## 🛠️ Tech Stack
 
 **Backend**

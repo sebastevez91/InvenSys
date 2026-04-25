@@ -81,7 +81,9 @@ const Login = () => {
             ) : 'Ingresar'}
           </button>
         </form>
-
+        <p className="login-demo-hint">
+          Demo: <strong>admin</strong> / <strong>password</strong>
+        </p>
       </div>
     </div>
   );

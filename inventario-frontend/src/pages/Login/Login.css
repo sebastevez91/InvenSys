@@ -201,6 +201,19 @@
   display: inline-block;
 }
 
+/* --- Demo hint --- */
+.login-demo-hint {
+  margin-top: 20px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: center;
+}
+
+.login-demo-hint strong {
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 600;
+}
+
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
